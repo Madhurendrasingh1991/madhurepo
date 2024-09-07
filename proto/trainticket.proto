@@ -1,0 +1,31 @@
+syntax = "proto3";
+option go_package = "./proto";
+
+package trainticket.grpc;
+
+message BookTicketRequest {
+  string from = 1;
+  string to = 2;
+  repeated User user = 3;
+}
+
+message User {
+  string firstName = 1;
+  string lastName = 2;
+  string email =3;
+}
+
+message BookTicketResponse {
+  string isTicketBook = 1;
+}
+
+message GetUser {
+  string userId = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email =4;
+}
+
+service TrainTicket {
+  rpc BookTicket(BookTicketRequest) returns (BookTicketResponse) {}
+}

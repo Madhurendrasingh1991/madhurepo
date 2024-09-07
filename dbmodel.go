@@ -1,32 +1,38 @@
 package main
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
-	FirstName string `gorm:"column:first_name"`
-	LastName  string `gorm:"column:last_name"`
-	Email     string `gorm:"column: email"`
+	FirstName     string          `gorm:"column:first_name"`
+	LastName      string          `gorm:"column:last_name"`
+	Email         string          `gorm:"column: email"`
+	TicketDetails []TicketDetails `gorm:"foreignKey:UserID"`
 }
 
 type TrainDetails struct {
 	gorm.Model
 	TrainName  string       `gorm:"column:train_name"`
 	TrainType  string       `gorm:"column:last_name"`
-	TrainClass []TrainClass `gorm:"column:train_class"`
+	TrainClass []TrainClass `gorm:"foreignKey:TrainIDReference"`
 }
 
 type TrainClass struct {
 	gorm.Model
-	Class        string         `gorm:"column:train_class"`
-	BookingSeats []BookingSeats `gorm:"column:booking_seats"`
-	TrainDetails []TrainDetails
+	Class            string         `gorm:"column:train_class"`
+	TrainIDReference uint           `gorm:"column:train_id_reference"`
+	BookingSeats     []BookingSeats `gorm:"foreignKey:TrainClassReference"`
 }
 
 type BookingSeats struct {
 	gorm.Model
-	SeatNumber int  `gorm:"column:seat_number"`
-	IsBooked   bool `gorm:"column:is_booked"`
+	SeatNumber          int  `gorm:"column:seat_number"`
+	IsBooked            bool `gorm:"column:is_booked"`
+	TrainClassReference uint `gorm:"column:train_class_reference"`
 }
 
 type PaymentDetails struct {
@@ -48,13 +54,14 @@ type TicketDetails struct {
 	To            string `gorm:"column:to"`
 	Status        string `gorm:"column:ticket_status"`
 	Price         int    `gorm:"column:tickets_price"`
-	User          User   `gorm:"column:user_details"`
+	UserID        uint   `gorm:"column:user_id"`
 	TransactionID int    `gorm:"column:transaction_id"`
 	TrainId       uint   `gorm:"column:train_id"`
 	TrainClass    string `gorm:"column:train_class"`
 }
 
 func initModel() {
+	fmt.Println("Initialize Model---")
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&TrainDetails{})
 	db.AutoMigrate(&TrainClass{})
@@ -62,4 +69,5 @@ func initModel() {
 	db.AutoMigrate(&PaymentDetails{})
 	db.AutoMigrate(&FairDetails{})
 	db.AutoMigrate(&TicketDetails{})
+	fmt.Println("Model Initialized")
 }
